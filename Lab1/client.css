@@ -80,7 +80,7 @@ body {
 
 }
 
-.form {
+.inputAndLabel {
     display: flex;
     justify-content: space-between;
 }
