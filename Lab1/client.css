@@ -29,17 +29,17 @@ body {
     justify-content: end;
 }
 
-
-/*
-    Welcome window classes and ids:
-*/
-
-#mainWindow {
+.mainWindow {
     height: 400px;
     width: 600px;
     margin: 100 0 0 0;
     justify-content: center;
 }
+
+
+/*
+    Welcome window classes and ids:
+*/
 
 #loginWindow {
     background-color: blue;
@@ -83,4 +83,48 @@ body {
 .inputAndLabel {
     display: flex;
     justify-content: space-between;
+}
+
+/*
+    Profile window classes and ids:
+*/
+
+#tabs {
+    height: 50px;
+    width: 300px;
+    margin: 0 0 10 0;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: none;
+    padding: 20px;
+    margin: 0 10 0 0;
+
+}
+
+.tab h2 {
+    margin: 0;
+}
+
+.tab.active {
+    background-color: #e6e6e6;
+    border-bottom: 2px solid black;
+}
+
+#panels {
+    background-color: white;
+    height: 400px;
+    width: 600px;
+    
+}
+
+.panel {
+    display: none;
+}
+
+.panel.active {
+    display: block;
 }

@@ -6,19 +6,24 @@ displayView = function(selectedView){
     view.innerHTML = selection.innerHTML;
 };
 
+viewDecider = function() {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        displayView("profileView")
+    } else {
+        displayView("welcomeView")
+    };
+
+}
+
 window.onload = function(){
     //code that is executed as the page is loaded.
     //You shall put your own custom code here.
     //window.alert() is not allowed to be used in your implementation.
     //window.alert("Hello TDDD97!");
 
-    const loggedIn = false;
-
-    if (loggedIn) {
-        displayView("profileView")
-    } else {
-        displayView("welcomeView")
-    };
+    viewDecider();
 };
 
 
@@ -65,8 +70,40 @@ submitSignup = function() {
     window.alert(result.message);
 
     if (result.success) {
-        displayView(profileView);
+        localStorage.setItem("token", result.data);
+        viewDecider();
+    } else {
+        document.getElementById("signupError").innerText = result.message;
     }
 
 };
+
+submitLogin = function() {
+    const email = document.getElementById("loginEmail");
+    const password = document.getElementById("loginPassword");
+    
+    window.alert(email.value)
+    window.alert(password.value)
+
+    const result = serverstub.signIn(email.value, password.value)
+
+    if (result.success) {
+        localStorage.setItem("token", result.data);
+        viewDecider();
+    } else {
+        document.getElementById("loginError").innerText = result.message;
+    }
+
+}
+
+switchTab = function(name) {
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".panel");
+
+    tabs.forEach(tab => tab.classList.remove("active"));
+    panels.forEach(panel => panel.classList.remove("active"));
+    
+    document.getElementById(name + "Tab").classList.add("active");
+    document.getElementById(name + "Panel").classList.add("active");
+}
 
