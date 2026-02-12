@@ -63,50 +63,105 @@
                             </div>
                             <div class="inputAndLabel">
                                 <label>Repeat PS</label>
-                                <input type="password" id="repeatPS" oninput="validateRepeatPassword()" required>
+                                <input type="password" id="repeatPS" oninput="validateRepeatPassword('passwordSignup', 'repeatPS')" required>
                             </div>
                             <div class="flexEnd">
                                 <input type="submit" value="Signup"></input>
                                 <p id="signupError"></p>
                             </div>
                         </form>
-
-                        
                     </div>
                 </div>
             </div>
         </script>
         <script type=”text/view” id="profileView">
-            <div class="mainWindow">
-                <div>
+            <div class="mainWindow flexColumn">
+                <div id="tabs" class="flexRow">
+                    <button class="tab active" id="homeTab" onclick="switchTab('home')">
+                        <h2>Home</h2>
+                    </button>
+                    <button class="tab" id="browseTab" onclick="switchTab('browse')">
+                        <h2>Browse</h2>
+                    </button>
+                    <button class="tab" id="accountTab" onclick="switchTab('account')">
+                        <h2>Account</h2>
+                    </button>
+                </div>
+                <div id="panels">
+                    <div class="panel active" id="homePanel">
+                        <div id="homeFlex" class="flexRow flexBetween">
+                            <div id="messageBoard">
+                                <div id="messageWall">
+                                </div>
+                                <input id="messageInput"></input>
+                                <button id="postButton" onclick="postMessage(true)">POST</button>
+                                <button id="refreshButton" onclick="updateMessageBox(true)">REFRESH</button>
+                            </div>
+                            <div class="middleBox">
+                                <h2>Your</h2>
+                                <h2>homepage</h2>
+                            </div>
+                            <div id="accountInfo">
+                                <img src="/1048.png">
+                                <p id="homeFirstname"></p>
+                                <p id="homeLastname"></p>
+                                <p id="homeGender"></p>
+                                <p id="homeEmail"></p>
+                                <p id="homeCity"></p>
+                                <p id="homeCountry"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel" id="browsePanel">
+                        <div id="browseFlex" class="flexRow flexBetween">
+                            <div id="browseMessageBoard">
+                                <div id="browseMessageWall"></div>
+                                <input id="browseMessageInput"></input>
+                                <button onclick="postMessage(false)">POST</button>
+                                <button onclick="updateMessageBox(false)">REFRESH</button>
+                            </div>
+                            <div class="middleBox">
+                                <h2 id="emailH2">Search</h2>
+                                <h2 id="profileH2">profile</h2>
+                                <input id="searchUser"></input>
+                                <button id="searchButton" onclick="loadData(false)">SEARCH</button>
+                            </div>
+                            <div id="browseInfo">
+                                <img src="/1048.png">
+                                <p id="browseFirstname"></p>
+                                <p id="browseLastname"></p>
+                                <p id="browseGender"></p>
+                                <p id="browseEmail"></p>
+                                <p id="browseCity"></p>
+                                <p id="browseCountry"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel" id="accountPanel">
+                        <form onsubmit="submitPasswordChange(event)" id="changePasswordPanel">
+                            <div class="inputAndLabel flexColumn">
+                                <label>Enter your current password</label>
+                                <input type="password" id="oldPassword" required>
+                            </div>
+                            <div class="inputAndLabel flexColumn">
+                                <label>Enter your new password</label>
+                                <input type="password" id="newPassword" required>
+                            </div>
+                            <div class="inputAndLabel flexColumn">
+                                <label>Repeat new password</label>
+                                <input type="password" id="newRepeat" oninput="validateRepeatPassword('newPassword', 'newRepeat')" required>
+                            </div>
+                            <input type="submit" value="Change password"></input>
+                            <p id="changePasswordStatus"></p>
+                        </form>
+                        <button onclick="submitSignout()">Sign Out</button>
+                    </div>
+                </div>
             </div>
         </script>
     </head>
     <body>
-        <!-- <div id="view"></div> -->
-        <div class="mainWindow flexColumn">
-            <div id="tabs" class="flexRow">
-                <button class="tab active" id="homeTab" onclick="switchTab('home')">
-                    <h2>Home</h2>
-                </button>
-                <button class="tab" id="browseTab" onclick="switchTab('browse')">
-                    <h2>Browse</h2>
-                </button>
-                <button class="tab" id="accountTab" onclick="switchTab('account')">
-                    <h2>Account</h2>
-                </button>
-            </div>
-            <div id="panels">
-                <div class="panel active" id="homePanel">
-                    <p>home</p>
-                </div>
-                <div class="panel" id="browsePanel">
-                    <p>browse</p>
-                </div>
-                <div class="panel" id="accountPanel">
-                    <p>account</p>
-                </div>
-            </div>
-        </div>
+        <div id="view"></div>
+        
     </body>
 </html>

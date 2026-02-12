@@ -29,6 +29,11 @@ body {
     justify-content: end;
 }
 
+.flexBetween {
+    display: flex;
+    justify-content: space-between;
+}
+
 .mainWindow {
     height: 400px;
     width: 600px;
@@ -118,13 +123,80 @@ body {
     background-color: white;
     height: 400px;
     width: 600px;
-    
 }
 
 .panel {
     display: none;
+    margin: 10;
 }
 
 .panel.active {
     display: block;
 }
+
+#changePasswordPanel {
+    width: 240px;
+}
+
+#accountInfo {
+    background-color: #e6e6e6;
+    text-align: center;
+    padding: 10 10 10 10;
+}
+
+#homePanel {
+    height: 300px;
+}
+
+#homeFlex {
+    height: 320px;
+}
+
+#messageBoard{
+    align-items: left;
+    height: 300px;
+}
+
+#messageWall {
+    height: 300px;
+    width: 274px;
+    background-color: #e6e6e6;
+    overflow: auto;
+    margin-bottom: 5;
+    padding: 0 0 0 10;
+}
+
+
+#browseFlex {
+    height: 320px;
+}
+
+#browsePanel {
+    height: 300px;
+}
+
+#browseMessageWall {
+    height: 300px;
+    width: 274px;
+    background-color: #e6e6e6;
+    overflow: auto;
+    margin-bottom: 5;
+    padding: 0 0 0 10;
+}
+
+#browseInfo {
+    max-height: 100%;
+    width: 141px;
+    background-color: #e6e6e6;
+    text-align: center;
+    padding: 10 10 10 10;
+}
+
+.middleBox {
+    text-align: center;
+}
+
+.middleBox input {
+    width: 116px;
+}
+
