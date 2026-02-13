@@ -7,6 +7,7 @@ body {
     background-color: lightblue;
     display: flex;
     justify-content: center;
+    font-family: "Times New Roman", Times, serif;
 }
 
 .flexColumn {
@@ -37,7 +38,7 @@ body {
 .mainWindow {
     height: 400px;
     width: 600px;
-    margin: 100 0 0 0;
+    margin: 100px 0px 0px 0px;
     justify-content: center;
 }
 
@@ -49,8 +50,8 @@ body {
 #loginWindow {
     background-color: blue;
     color: white;
-    height: 30%;
-    margin: 0 0 5 0;
+    height: 120px;
+    margin: 0px 0px 5px 0px;
     padding: 5px;
     
     
@@ -59,8 +60,8 @@ body {
 #signupWindow {
     background-color: red;
     color: white;
-    height: 70%;
-    margin: 5 0 0 0;
+    height: 280px;
+    margin: 5px 0px 0px 0px;
     padding: 5px;
     
 }
@@ -68,26 +69,36 @@ body {
 #loginSignup {
     height: 400px;
     width: 250px;
-    margin: 0 0 0 5; 
+    margin: 0px 0px 0px 5px; 
     
 }
 
 #loginSignup h2 {
-    margin: 0 0 10 0;
+    margin: 0px 0px 10px 0px;
 }
 
 
 
 #logoSloganWindow {
     background-color: green;
-    width: 340px; 
-    margin: 0 5 0 0; 
+    width: 340px;
+    height: 400px; 
+    margin: 0px 5px 0px 0px; 
 
 }
 
 .inputAndLabel {
     display: flex;
     justify-content: space-between;
+}
+
+.inputAndLabel input {
+    max-width: 150px;
+}
+
+#loginError {
+    max-height: 10px;
+    font-size: 14px;
 }
 
 /*
@@ -97,7 +108,7 @@ body {
 #tabs {
     height: 50px;
     width: 300px;
-    margin: 0 0 10 0;
+    margin: 0px 0px 10px 0px;
 }
 
 .tab {
@@ -106,12 +117,12 @@ body {
     background-color: white;
     border: none;
     padding: 20px;
-    margin: 0 10 0 0;
+    margin: 0px 10px 0px 0px;
 
 }
 
 .tab h2 {
-    margin: 0;
+    margin: 0px;
 }
 
 .tab.active {
@@ -127,7 +138,7 @@ body {
 
 .panel {
     display: none;
-    margin: 10;
+    margin: 10px;
 }
 
 .panel.active {
@@ -141,7 +152,7 @@ body {
 #accountInfo {
     background-color: #e6e6e6;
     text-align: center;
-    padding: 10 10 10 10;
+    padding: 10px;
 }
 
 #homePanel {
@@ -153,17 +164,16 @@ body {
 }
 
 #messageBoard{
-    align-items: left;
     height: 300px;
 }
 
 #messageWall {
     height: 300px;
-    width: 274px;
+    width: 290px;
     background-color: #e6e6e6;
     overflow: auto;
-    margin-bottom: 5;
-    padding: 0 0 0 10;
+    margin-bottom: 5px;
+    padding: 0px 0px 0px 10px;
 }
 
 
@@ -177,11 +187,11 @@ body {
 
 #browseMessageWall {
     height: 300px;
-    width: 274px;
+    width: 290px;
     background-color: #e6e6e6;
     overflow: auto;
-    margin-bottom: 5;
-    padding: 0 0 0 10;
+    margin-bottom: 5px;
+    padding: 0px 0px 0px 10px;
 }
 
 #browseInfo {
@@ -189,7 +199,7 @@ body {
     width: 141px;
     background-color: #e6e6e6;
     text-align: center;
-    padding: 10 10 10 10;
+    padding: 10px;
 }
 
 .middleBox {

@@ -82,7 +82,8 @@ submitSignup = function() {
     }
 };
 
-submitLogin = function() {
+submitLogin = function(event) {
+    event.preventDefault();
     const email = document.getElementById("loginEmail");
     const password = document.getElementById("loginPassword");
 
@@ -104,7 +105,7 @@ submitSignout = function() {
         localStorage.removeItem("token");
         viewDecider();
     } else {
-        window.alert(result.message);
+        document.getElementById("signoutError").value = result.message;
     }
 }
 
