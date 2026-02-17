@@ -4,12 +4,12 @@
         <meta charset="utf-8">
         <title>Twidder: for uwus</title>
         <link href="client.css" type="text/css" rel="stylesheet">
-        <script src="client.js" type="text/javascript"></script>
-        <script src="serverstub.js" type="text/javascript"></script>
-        <template type=”text/view” id="welcomeView">
-            <div class="flexRow" class="mainWindow">
+        <script src="client.js"></script>
+        <script src="serverstub.js"></script>
+        <template id="welcomeView">
+            <div class="flexRow mainWindow">
                 <div id="logoSloganWindow">
-                    <img src="/wimage.png" alt="slogan and logo">
+                    <img src="wimage.png" alt="slogan and logo">
                 </div>
                 <div class="flexColumn" id="loginSignup">
                     <div id="loginWindow" class="flexColumn flexAround">
@@ -25,7 +25,7 @@
                             </div>
                             <div class="flexBetween">
                                 <p id="loginError"></p>
-                                <input type="submit" value="Login"></input>
+                                <input type="submit" value="Login">
                                 
                             </div>
                         </form>
@@ -70,7 +70,7 @@
                                 <input type="password" id="repeatPS" oninput="validateRepeatPassword('passwordSignup', 'repeatPS')" required>
                             </div>
                             <div class="flexEnd">
-                                <input type="submit" value="Signup"></input>
+                                <input type="submit" value="Signup">
                                 <p id="signupError"></p>
                             </div>
                         </form>
@@ -78,7 +78,7 @@
                 </div>
             </div>
         </template>
-        <template type=”text/view” id="profileView">
+        <template id="profileView">
             <div class="mainWindow flexColumn">
                 <div id="tabs" class="flexRow">
                     <button class="tab active" id="homeTab" onclick="switchTab('home')">
@@ -97,7 +97,7 @@
                             <div id="messageBoard">
                                 <div id="messageWall">
                                 </div>
-                                <input id="messageInput"></input>
+                                <input id="messageInput">
                                 <button id="postButton" onclick="postMessage(true)">POST</button>
                                 <button id="refreshButton" onclick="updateMessageBox(true)">REFRESH</button>
                             </div>
@@ -120,14 +120,14 @@
                         <div id="browseFlex" class="flexRow flexBetween">
                             <div id="browseMessageBoard">
                                 <div id="browseMessageWall"></div>
-                                <input id="browseMessageInput"></input>
+                                <input id="browseMessageInput">
                                 <button onclick="postMessage(false)">POST</button>
                                 <button onclick="updateMessageBox(false)">REFRESH</button>
                             </div>
                             <div class="middleBox">
                                 <h2 id="emailH2">Search</h2>
                                 <h2 id="profileH2">profile</h2>
-                                <input id="searchUser"></input>
+                                <input id="searchUser">
                                 <button id="searchButton" onclick="loadData(false)">SEARCH</button>
                             </div>
                             <div id="browseInfo">
@@ -155,7 +155,7 @@
                                 <label>Repeat new password</label>
                                 <input type="password" id="newRepeat" oninput="validateRepeatPassword('newPassword', 'newRepeat')" required>
                             </div>
-                            <input type="submit" value="Change password"></input>
+                            <input type="submit" value="Change password">
                             <p id="changePasswordStatus"></p>
                         </form>
                         <p id="signoutError"></p>
