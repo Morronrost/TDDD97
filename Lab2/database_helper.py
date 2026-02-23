@@ -51,12 +51,12 @@ def sign_up(email, password, firstname, familyname, gender, city, country):
         db.close()
         return False
 
+
 def sign_in(email, password):
     db = get_db()
     cursor = db.cursor()
 
     user = cursor.execute("SELECT email, password FROM users WHERE email=?", (email,)).fetchone()
-
     if not user:
         return False, None
 
@@ -74,4 +74,19 @@ def sign_in(email, password):
     db.close()
     
     return True, token
+
+
+def change_password(token, oldpassword, newpassword):
+    db = get_db()
+    cursor = db.cursor()
+
+    user = cursor.execute("SELECT password, token FROM users WHERE token=?", (token,)).fetchone()
+
+    if user["token"] != token:
+        return False, "token"
+    elif user["password"] != oldpassword:
+        return False, "password"
+    else:
+        cursor.execute("UPDATE users SET password=? WHERE token=?", (newpassword, token,))
+        return True, None
 
