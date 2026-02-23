@@ -59,9 +59,9 @@ def sign_in():
 @app.route("/change_password", methods=["PUT"])
 def change_password():
     data = request.get_json()
-
+    token = request.headers.get("Authorization")
     
-    if data.get("token") == None:
+    if token == None:
         return jsonify(success=False, message="Incorrect token", data=None), 200
     if data.get("oldpassword") == None:
         return jsonify(success=False, message="Incorrect oldpassword", data=None), 200
@@ -70,7 +70,7 @@ def change_password():
 
 
 
-    success, error = database_helper.change_password(data.get("token"), data.get("oldpassword"), data.get("newpassword"))
+    success, error = database_helper.change_password(token, data.get("oldpassword"), data.get("newpassword"))
 
     if not success:
         if error == "token":
