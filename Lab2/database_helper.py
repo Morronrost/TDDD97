@@ -18,7 +18,18 @@ def init_db():
         token TEXT
     )
     """)
+
+    db.execute("""
+    CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        receiver_email TEXT NOT NULL,
+        sender_email TEXT NOT NULL,
+        content TEXT NOT NULL
+    )
+    """)
     db.commit()
+
+
 
 def get_db():
     db = getattr(g, 'db', None)
@@ -26,16 +37,6 @@ def get_db():
         db = g.db = sqlite3.connect(DATABASE_URI)
         db.row_factory = sqlite3.Row
     return db
-
-def get_user_by_email(email):
-    db = get_db()
-    cursor = db.cursor()
-
-    user = cursor.execute("SELECT email, password FROM users WHERE email=?", (email,)).fetchone()
-
-    return user
-
-
 
 
 def sign_up(email, password, firstname, familyname, gender, city, country):
@@ -75,18 +76,77 @@ def sign_in(email, password):
     
     return True, token
 
+def sign_out(token):
+    db = get_db()
+    cursor = db.cursor()
+
+    user = cursor.execute("SELECT email FROM users WHERE token=?", (token,)).fetchone()
+
+    if not user:
+        return False
+
+    cursor.execute("UPDATE users SET token=NULL WHERE token=?", (token,))
+
+    db.commit()
+    db.close()
+    return True
+
 
 def change_password(token, oldpassword, newpassword):
     db = get_db()
     cursor = db.cursor()
 
     user = cursor.execute("SELECT password, token FROM users WHERE token=?", (token,)).fetchone()
-
-    if user["token"] != token:
+    
+    if not user:
+        return False, "token"
+    elif user["token"] != token:
         return False, "token"
     elif user["password"] != oldpassword:
         return False, "password"
     else:
         cursor.execute("UPDATE users SET password=? WHERE token=?", (newpassword, token,))
         return True, None
+
+def get_user_data_by_token(token):
+    db = get_db()
+    cursor = db.cursor()
+
+    user = cursor.execute("SELECT email, firstname, familyname, gender, city, country FROM users WHERE token=?", (token,)).fetchone()
+    if not user:
+        return False, None
+
+    return True, user
+
+def get_user_data_by_email(token, email):
+    db = get_db()
+    cursor = db.cursor()
+
+    user = cursor.execute("SELECT email, firstname, familyname, gender, city, country FROM users WHERE email=?", (email,)).fetchone()
+
+    if not user:
+        return False, None
+    
+    return True, user
+
+def get_user_messages_by_email(email):
+    db = get_db()
+    cursor = db.cursor()
+
+    rows = cursor.execute("SELECT sender_email, content FROM messages WHERE receiver_email=?", (email,)).fetchall()
+
+    messages = [dict(row) for row in rows]
+
+    return True, messages
+
+def post_message(token, message, email):
+    db = get_db()
+    cursor = db.cursor()
+
+    data = get_user_data_by_token(token)[1]
+
+    cursor.execute("INSERT INTO messages (receiver_email, sender_email, content) VALUES (?, ?, ?)", (email, data["email"], message))
+    db.commit()
+    db.close()
+    return True
 
