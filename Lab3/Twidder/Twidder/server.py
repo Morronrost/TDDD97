@@ -1,10 +1,32 @@
 from flask import Flask, request, jsonify
+from flask_sock import Sock
+import json
 import database_helper
 
 app = Flask(__name__)
 
+sock = Sock(app)
+
 with app.app_context():
     database_helper.init_db()
+
+active_sockets = {}
+
+@sock.route("/ws/<token>")
+def websocket_connection(ws, token):
+    success, user = database_helper.get_user_data_by_token(token)
+
+    if not success:
+        ws.close()
+        return
+
+    active_sockets[user["email"]] = ws
+    ws.receive()
+
+    if active_sockets.get(user["email"]) == ws:
+        del active_sockets[user["email"]]
+
+
 
 @app.route("/")
 def root():
@@ -53,6 +75,18 @@ def sign_in():
         return jsonify(success=False, message="Missing JSON body", data=None)
 
     success, token = database_helper.sign_in(data.get("username"), data.get("password"))
+
+    if success:
+        success_user, user = database_helper.get_user_data_by_token(token)
+        email = user["email"]
+        if email in active_sockets:
+            try:
+                active_sockets[email].send(
+                    json.dumps({"type": "logout"})
+                )
+                active_sockets[email].close()
+            except:
+                pass
 
     if not success:
         return jsonify(success=False, message="Invalid username or password"), 200

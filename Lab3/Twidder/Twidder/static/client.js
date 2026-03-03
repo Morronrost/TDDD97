@@ -10,6 +10,7 @@ viewDecider = function() {
     const token = localStorage.getItem("token");
     
     if (token) {
+        initWebSocket(token);
         displayView("profileView")
         loadData(true)
         updateMessageBox();
@@ -93,6 +94,7 @@ submitLogin = function(event) {
     sendRequest("POST", "/sign_in", signinData, function(result) {
         if (result.success) {
             localStorage.setItem("token", result.data);
+            initWebSocket(result.data);
             viewDecider();
         }
         else {
@@ -280,4 +282,31 @@ sendRequest = function(method, path, data, callback, token=null) {
         }
     }
     request.send(JSON.stringify(data));
+}
+
+persistentSocket = null;
+
+initWebSocket = function(token) {
+
+    if (persistentSocket) return;
+
+    const wsUrl = "ws://" + window.location.host + "/ws/" + token;
+
+    persistentSocket = new WebSocket(wsUrl);
+
+    persistentSocket.onmessage = function(event) {
+        const msg = JSON.parse(event.data);
+        
+        if (msg.type === "logout") {
+            localStorage.removeItem("token"); 
+            persistentSocket.close();
+            persistentSocket = null;
+            viewDecider();
+        }
+    }
+
+    persistentSocket.onclose = function() {
+        persistentSocket = null;
+    };
+
 }
