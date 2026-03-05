@@ -1,0 +1,211 @@
+
+/*
+    General classes and ids:
+*/
+
+body {
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.flexColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.flexRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.flexAround {
+    display: flex;
+    justify-content: space-around;
+}
+
+.flexEnd {
+    display: flex;
+    justify-content: end;
+}
+
+.flexBetween {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mainWindow {
+    height: 400px;
+    width: 600px;
+    margin: 100px 0px 0px 0px;
+    justify-content: center;
+}
+
+
+/*
+    Welcome window classes and ids:
+*/
+
+#loginWindow {
+    background-color: blue;
+    color: white;
+    height: 120px;
+    margin: 0px 0px 5px 0px;
+    padding: 5px;
+    
+    
+}
+
+#signupWindow {
+    background-color: red;
+    color: white;
+    height: 280px;
+    margin: 5px 0px 0px 0px;
+    padding: 5px;
+    
+}
+
+#loginSignup {
+    height: 400px;
+    width: 250px;
+    margin: 0px 0px 0px 5px; 
+    
+}
+
+#loginSignup h2 {
+    margin: 0px 0px 10px 0px;
+}
+
+
+
+#logoSloganWindow {
+    background-color: green;
+    width: 340px;
+    height: 400px; 
+    margin: 0px 5px 0px 0px; 
+
+}
+
+.inputAndLabel {
+    display: flex;
+    justify-content: space-between;
+}
+
+.inputAndLabel input {
+    max-width: 150px;
+}
+
+#loginError {
+    max-height: 10px;
+    font-size: 14px;
+}
+
+/*
+    Profile window classes and ids:
+*/
+
+#tabs {
+    height: 50px;
+    width: 300px;
+    margin: 0px 0px 10px 0px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: none;
+    padding: 20px;
+    margin: 0px 10px 0px 0px;
+
+}
+
+.tab h2 {
+    margin: 0px;
+}
+
+.tab.active {
+    background-color: #e6e6e6;
+    border-bottom: 2px solid black;
+}
+
+#panels {
+    background-color: white;
+    height: 400px;
+    width: 600px;
+}
+
+.panel {
+    display: none;
+    margin: 10px;
+}
+
+.panel.active {
+    display: block;
+}
+
+#changePasswordPanel {
+    width: 240px;
+}
+
+#accountInfo {
+    background-color: #e6e6e6;
+    text-align: center;
+    padding: 10px;
+}
+
+#homePanel {
+    height: 300px;
+}
+
+#homeFlex {
+    height: 320px;
+}
+
+#messageBoard{
+    height: 300px;
+}
+
+#messageWall {
+    height: 300px;
+    width: 290px;
+    background-color: #e6e6e6;
+    overflow: auto;
+    margin-bottom: 5px;
+    padding: 0px 0px 0px 10px;
+}
+
+
+#browseFlex {
+    height: 320px;
+}
+
+#browsePanel {
+    height: 300px;
+}
+
+#browseMessageWall {
+    height: 300px;
+    width: 290px;
+    background-color: #e6e6e6;
+    overflow: auto;
+    margin-bottom: 5px;
+    padding: 0px 0px 0px 10px;
+}
+
+#browseInfo {
+    width: 141px;
+    background-color: #e6e6e6;
+    text-align: center;
+    padding: 10px;
+}
+
+.middleBox {
+    text-align: center;
+}
+
+.middleBox input {
+    width: 116px;
+}
+

@@ -21,11 +21,8 @@ def websocket_connection(ws, token):
         return
 
     active_sockets[user["email"]] = ws
-    
-    #Hold ws open until logout request is sent.
     ws.receive()
 
-    #Remove socket after logout
     if active_sockets.get(user["email"]) == ws:
         del active_sockets[user["email"]]
 
@@ -101,23 +98,7 @@ def sign_out():
     token = request.headers.get("Authorization")
 
     if not database_helper.get_user_data_by_token(token)[0] or not token:
-        return jsonify(success=False, message="Incorrect token", data=None), 200
-
-    success, user = database_helper.get_user_data_by_token(token)
-
-    if not success or not token:
         return jsonify(success=False, message="Incorrect token", data=None), 200 
-
-    email = user["email"]
-
-    if email in active_sockets:
-        try:
-            active_sockets[email].send(
-                json.dumps({"type": "logout"})
-            )
-            active_sockets[email].close()
-        except:
-            pass
 
     success = database_helper.sign_out(token)
 

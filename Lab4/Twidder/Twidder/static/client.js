@@ -94,6 +94,7 @@ submitLogin = function(event) {
     sendRequest("POST", "/sign_in", signinData, function(result) {
         if (result.success) {
             localStorage.setItem("token", result.data);
+            initWebSocket(result.data);
             viewDecider();
         }
         else {
