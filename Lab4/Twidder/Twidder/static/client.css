@@ -165,17 +165,17 @@ body {
 
 #messageBoard{
     height: 300px;
+    width: 320px;
 }
 
 #messageWall {
     height: 300px;
-    width: 290px;
+    width: 300px;
     background-color: #e6e6e6;
     overflow: auto;
     margin-bottom: 5px;
     padding: 0px 0px 0px 10px;
 }
-
 
 #browseFlex {
     height: 320px;
@@ -185,9 +185,14 @@ body {
     height: 300px;
 }
 
+#browseMessageBoard{
+    height: 300px;
+    width: 320px;
+}
+
 #browseMessageWall {
     height: 300px;
-    width: 290px;
+    width: 300px;
     background-color: #e6e6e6;
     overflow: auto;
     margin-bottom: 5px;
@@ -195,7 +200,7 @@ body {
 }
 
 #browseInfo {
-    width: 141px;
+   
     background-color: #e6e6e6;
     text-align: center;
     padding: 10px;
@@ -203,9 +208,18 @@ body {
 
 .middleBox {
     text-align: center;
+    width: 130px;
 }
 
 .middleBox input {
     width: 116px;
+}
+
+#errorBar {
+    background-color: red;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    width: 600px;
 }
 

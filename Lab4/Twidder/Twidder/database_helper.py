@@ -119,7 +119,7 @@ def get_user_data_by_token(token):
 
     return True, user
 
-def get_user_data_by_email(token, email):
+def get_user_data_by_email(email):
     db = get_db()
     cursor = db.cursor()
 

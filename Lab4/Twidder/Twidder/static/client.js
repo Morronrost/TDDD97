@@ -68,19 +68,27 @@ submitSignup = function(event) {
     const password = document.getElementById("passwordSignup");
 
     const user = {firstname:firstname.value, familyname:lastname.value, gender:gender.value, city:city.value, country:country.value, email:email.value, password:password.value};
-    sendRequest("POST", "/sign_up", user, function(result) {
-        if (result.success) {
+    sendRequest("POST", "/sign_up", user, function(status, result) {
+        if (status == 201) {
             
             var signinData = {username:email.value, password:password.value} 
-            sendRequest("POST", "/sign_in", signinData, function(result) {
-                if (result.success) {
+            sendRequest("POST", "/sign_in", signinData, function(status, result) {
+                if (status == 200) {
                     localStorage.setItem("token", result.data);
                     viewDecider();
                 }
             })
         }
-        else {
-            document.getElementById("signupError").innerText = result.message;
+        else if (status == 400) {
+            if(result.message == "Invalid data field.") {
+                getElementById("signupError").innerText = "One or more input fields is missing.";    
+            }
+            else {
+                getElementById("signupError").innerText = "Invalid email";
+            }
+        }
+        else if (status == 409) {
+            getElementById("signupError").innerText = "User already exists"
         }
     })
 };
@@ -91,27 +99,34 @@ submitLogin = function(event) {
     const password = document.getElementById("loginPassword");
 
     var signinData = {username:email.value, password:password.value} 
-    sendRequest("POST", "/sign_in", signinData, function(result) {
-        if (result.success) {
+    sendRequest("POST", "/sign_in", signinData, function(status, result) {
+        if (status == 200) {
             localStorage.setItem("token", result.data);
             initWebSocket(result.data);
             viewDecider();
         }
-        else {
-            document.getElementById("loginError").innerText = result.message;
+        else if (status == 400) {
+            document.getElementById("loginError").innerText = "Missing input";
+        }
+        else if (status == 401) {
+            document.getElementById("loginError").innerText = "Invalid username or password";
+
         }
     });
 }
 
 submitSignout = function() {
     const token = localStorage.getItem("token");
-    sendRequest("DELETE", "/sign_out", null, function(result){
-        if (result.success) {
+    sendRequest("DELETE", "/sign_out", null, function(status, result){
+        if (status == 200) {
             localStorage.removeItem("token");
             viewDecider();
         }
-        else {
-            document.getElementById("signoutError").value = result.message;
+        else if (status == 404){
+            document.getElementById("signoutError").value = "Could not find user token";
+        }
+        else if (status == 401) {
+            document.getElementById("signoutError").value = "Could not authorize user";          
         }
     }, token);
 }
@@ -126,10 +141,22 @@ submitPasswordChange = function(event) {
     window.alert("new password: " + data.newpassword + "old password: " + data.oldpassword);
 
 
-    sendRequest("PUT", "/change_password", data, function(result){
-        document.getElementById("changePasswordStatus").innerText = result.message;
-        if (result.success) {
+    sendRequest("PUT", "/change_password", data, function(status, result){
+        if (status == 201) {
             document.getElementById("changePasswordPanel").reset();
+            document.getElementById("changePasswordStatus").innerText = "Password has been changed";
+        }
+        else if (status == 400 && result.message == "Incorrect oldpassword") {
+            document.getElementById("changePasswordStatus").innerText = "Current password is incorrect";
+        }
+        else if (status == 400) {
+            document.getElementById("changePasswordStatus").innerText = "Missing input";
+        }
+        else if (status == 401) {
+            document.getElementById("changePasswordStatus").innerText = "Authentication error";
+        }
+        else if (status == 404) {
+            document.getElementById("changePasswordStatus").innerText = "User not found";
         }
     }, token);
 }
@@ -152,8 +179,8 @@ updateMessageBox = function(self) {
 
 
     if (self) {
-        sendRequest("GET", "/get_user_messages_by_token", null, function(result){
-            if (result.success) {
+        sendRequest("GET", "/get_user_messages_by_token", null, function(status, result){
+            if (status == 200) {
                 wall = document.getElementById("messageWall");
                 const messages = result.data;
     
@@ -164,13 +191,23 @@ updateMessageBox = function(self) {
                     div.innerHTML = "<b>" + msg.sender_email + ":</b> " + msg.content;
                     wall.appendChild(div);
                 })
+                setErrorBar("");
+            }
+            else if (status == 400) {
+                setErrorBar("Empty message");
+            }
+            else if (status == 401) {
+                setErrorBar("Authentication error");
+            }
+            else if (status == 404 && result.message == "Email not found"){
+                setErrorBar("User not found");
             }
         }, token);
     }
     else {
         const email = document.getElementById("browseEmail").innerText;
-        sendRequest("GET", "/get_user_messages_by_email/" + email, null, function(result){
-            if (result.success) {
+        sendRequest("GET", "/get_user_messages_by_email/" + email, null, function(status, result){
+            if (status == 200) {
                 wall = document.getElementById("browseMessageWall");
 
                 const messages = result.data;
@@ -182,6 +219,16 @@ updateMessageBox = function(self) {
                     div.innerHTML = "<b>" + msg.sender_email + ":</b> " + msg.content;
                     wall.appendChild(div);
                 })
+                setErrorBar("");
+            }
+            else if (status == 400) {
+                setErrorBar("Empty message");
+            }
+            else if (status == 401) {
+                setErrorBar("Authentication error");
+            }
+            else if (status == 404) {
+                setErrorBar("User not found");
             }
         }, token);
     }
@@ -206,10 +253,23 @@ postMessage = function(self) {
     }
     if (messageInput.value != "") {
         var data = {email:email, message:messageInput.value}
-        sendRequest("POST", "/post_message", data, function(result){
-            if (result.success) {
+        sendRequest("POST", "/post_message", data, function(status, result){
+            if (status == 201) {
                 messageInput.value = "";
                 updateMessageBox(self)
+                etErrorBar("");
+            }
+            else if (status == 400) {
+                setErrorBar("Empty message");
+            }
+            else if (status == 401) {
+                setErrorBar("Authentication error");
+            }
+            else if (status == 404) {
+                setErrorBar("User not found");
+            }
+            else if (status == 500) {
+                setErrorBar("Internal error");
             }
         }, token);
         
@@ -218,49 +278,67 @@ postMessage = function(self) {
 
 loadData = function(self) {
     const token = localStorage.getItem("token");
-    let user;
-    let destination;
-
     
     if (self) {
-        sendRequest("GET", "/get_user_data_by_token", null, function(result){
-            if (result.success) {
-
-                
-                user = result.data;
-                destination = "home";
-
-                document.getElementById(destination + "Firstname").innerText = user.firstname;
-                document.getElementById(destination + "Lastname").innerText = user.familyname;
-                document.getElementById(destination + "Gender").innerText =  user.gender;
-                document.getElementById(destination + "Email").innerText = user.email;
-                document.getElementById(destination + "City").innerText = user.city;
-                document.getElementById(destination + "Country").innerText = user.country;
-                
-                updateMessageBox(self);
+        sendRequest("GET", "/get_user_data_by_token", null, function(status, result){
+            if (status == 200) {
+                displayInfo(true, result.data)
+            }
+            else if (status == 401) {
+                setErrorBar("Authentication error");
+            }
+            else if (status == 404) {
+                setErrorBar("User not found");
             }
         }, token);
     }
     else {
         const email = document.getElementById("searchUser").value
-        sendRequest("GET", "/get_user_data_by_email/" + email, null, function(result){
-            if (result.success) {
-                user = result.data;
-                destination = "browse";
-
-                document.getElementById(destination + "Firstname").innerText = user.firstname;
-                document.getElementById(destination + "Lastname").innerText = user.familyname;
-                document.getElementById(destination + "Gender").innerText =  user.gender;
-                document.getElementById(destination + "Email").innerText = user.email;
-                document.getElementById(destination + "City").innerText = user.city;
-                document.getElementById(destination + "Country").innerText = user.country;
-                
-                updateMessageBox(self);
+        sendRequest("GET", "/get_user_data_by_email/" + email, null, function(status, result){
+            if (status == 200) {
+                displayInfo(false, result.data);
+                setErrorBar("");
+            }
+            else if (status == 400) {
+                setErrorBar("Invalid email");
+            }
+            else if (status == 401) {
+                setErrorBar("Authentication error");
+            }
+            else if (status == 404) {
+                setErrorBar("User not found");
             }
         }, token);
     }
 
     
+    
+}
+
+setErrorBar = function(message) {
+    document.getElementById("errorBarMessage").innerText = message;
+}
+
+displayInfo = function(self, user, error) {
+    let destination;
+
+    if (self) {
+        destination = "home";
+    }
+    else {
+        destination = "browse";
+    }
+    
+    
+    document.getElementById(destination + "Firstname").innerText = user.firstname;
+    document.getElementById(destination + "Lastname").innerText = user.familyname;
+    document.getElementById(destination + "Gender").innerText =  user.gender;
+    document.getElementById(destination + "Email").innerText = user.email;
+    document.getElementById(destination + "City").innerText = user.city;
+    document.getElementById(destination + "Country").innerText = user.country;
+    
+    updateMessageBox(self); 
+
     
 }
 
@@ -274,12 +352,15 @@ sendRequest = function(method, path, data, callback, token=null) {
     }
     
     request.onload = function() {
-        if (request.status == 200) {
-            var result = JSON.parse(request.responseText);
-            callback(result);
-        } else {
-            callback({ success: false, message: "Server error" });
-        }
+        var result = JSON.parse(request.responseText);
+        callback(request.status ,result);
+        // if (request.status == 200 || request.status == 201) {
+        //     var result = JSON.parse(request.responseText);
+        //     callback(request.status ,result);
+        // }
+        // else {
+        //     callback({ request.status });
+        // }
     }
     request.send(JSON.stringify(data));
 }
