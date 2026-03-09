@@ -26,7 +26,7 @@ def websocket_connection(ws, token):
     if active_sockets.get(user["email"]) == ws:
         del active_sockets[user["email"]]
 
-
+#Error code 405 is automatically detected by flask and as such does not need to be explicitly implemented.
 
 @app.route("/")
 def root():
@@ -57,11 +57,15 @@ def sign_up():
             return jsonify(message="Invalid email.", data=None), 400
         if domain.startswith(".") or domain.endswith("."):
             return jsonify(message="Invalid email.", data=None), 400
+    
+    success, user = database_helper.get_user_data_by_email(data.get("email"))
+    if not success:
+        return jsonify(message="User already exists", data=None), 409
 
     success = database_helper.sign_up(data.get("email"), data.get("password"), data.get("firstname"), data.get("familyname"), data.get("gender"), data.get("city"), data.get("country"))
-
+    
     if not success:
-        return jsonify(message="User already exists.", data=None), 409
+        return jsonify(message="Internal error", data=None), 500
 
     return jsonify(message="User created.", data=None), 201
 
@@ -69,6 +73,7 @@ def sign_up():
 
 @app.route("/sign_in", methods=["POST"])
 def sign_in():
+    try:
     data = request.get_json()
 
     if not data:
@@ -93,16 +98,24 @@ def sign_in():
     
     return jsonify(message="Successfully logged in", data=token), 200
 
+    except:
+        return jsonify(message="Internal error", data=None), 500
+
+    
+
 @app.route("/sign_out", methods=["DELETE"])
 def sign_out():
     token = request.headers.get("Authorization")
 
     if not database_helper.get_user_data_by_token(token)[0]:
-        return jsonify(message="Incorrect token", data=None), 404 
+        return jsonify(message="Incorrect token", data=None), 401 
     elif not token:
-        return jsonify(message="Incorrect token", data=None), 401
+        return jsonify(message="Invalid token", data=None), 400
 
     success = database_helper.sign_out(token)
+
+    if not success:
+        return jsonify(message="Internal error", data=None), 500
 
     return jsonify(message="Successfully logged out", data=None), 200
 
@@ -124,7 +137,7 @@ def change_password():
 
     if not success:
         if error == "token":
-            return jsonify(message="Incorrect token", data=None), 404
+            return jsonify(message="Incorrect token", data=None), 500
         elif error == "password":
             return jsonify(message="Incorrect oldpassword", data=None), 400
 
@@ -143,7 +156,7 @@ def get_user_data_by_token():
     
     
     if not success:
-        return jsonify(message="Token not found", data=None), 404
+        return jsonify(message="Token not found", data=None), 500
     
     user = dict(user)
     return jsonify(message="Data retrieved", data=user), 200
@@ -157,7 +170,7 @@ def get_user_data_by_email(email):
         
 
     if not email:
-        return jsonify(message="Incorrect email", data=None), 400
+        return jsonify(message="Incorrect email", data=None), 500
 
     success, user = database_helper.get_user_data_by_email(email)
 
@@ -178,7 +191,7 @@ def post_message():
         return jsonify(message="Incorrect token", data=None), 401
 
     if not database_helper.get_user_data_by_email(data["email"])[0] or not data["email"]:
-        return jsonify(message="Email not found", data=None), 404
+        return jsonify(message="Internal error", data=None), 500
     
     if not data["message"]:
         return jsonify(message="No message", data=None), 400
@@ -191,20 +204,25 @@ def post_message():
 
 @app.route("/get_user_messages_by_email/<email>", methods=["GET"])
 def get_user_messages_by_email(email):
-    token = request.headers.get("Authorization")
+    try:
+        token = request.headers.get("Authorization")
 
-    if not database_helper.get_user_data_by_token(token)[0] or not token:
-        return jsonify(message="Incorrect token", data=None), 401
+        if not database_helper.get_user_data_by_token(token)[0] or not token:
+            return jsonify(message="Incorrect token", data=None), 401
 
-    success, messages = database_helper.get_user_messages_by_email(email)
+        success, messages = database_helper.get_user_messages_by_email(email)
 
-    if not success:
-        return jsonify(message="Email not found", data=None), 404
+        if not success:
+            return jsonify(message="Email not found", data=None), 404
 
-    if not messages:
-        return jsonify(message="Messages not found", data=None), 404
+        if not messages:
+            return jsonify(message="Messages not found", data=None), 404
 
-    return jsonify(message="Messages retreived", data=messages), 200
+        return jsonify(message="Messages retreived", data=messages), 200
+    except:
+        return jsonify(message="Internal error", data=none), 500
+
+    
 
 @app.route("/get_user_messages_by_token", methods=["GET"])
 def get_user_messages_by_token():
@@ -216,15 +234,15 @@ def get_user_messages_by_token():
     success, user = database_helper.get_user_data_by_token(token)
 
     if not success:
-        return jsonify(message="Token not found", data=None), 404
+        return jsonify(message="Token not found", data=None), 500
     
     success, messages = database_helper.get_user_messages_by_email(user["email"])
 
     if not success:
-        return jsonify(message="Email not found", data=None), 404
+        return jsonify(message="Email not found", data=None), 500
 
     if not messages:
-        return jsonify(message="No messages retreived", data=None), 404
+        return jsonify(message="No messages retreived", data=None), 500
 
     return jsonify(message="Messages retreived", data=messages), 200
 

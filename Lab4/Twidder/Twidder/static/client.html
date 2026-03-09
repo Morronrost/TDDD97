@@ -96,7 +96,7 @@
                             <div id="messageBoard">
                                 <div id="messageWall">
                                 </div>
-                                <input id="messageInput">
+                                <input id="messageInput" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)">
                                 <button id="postButton" onclick="postMessage(true)">POST</button>
                                 <button id="refreshButton" onclick="updateMessageBox(true)">REFRESH</button>
                             </div>
@@ -119,7 +119,7 @@
                         <div id="browseFlex" class="flexRow flexBetween">
                             <div id="browseMessageBoard">
                                 <div id="browseMessageWall"></div>
-                                <input id="browseMessageInput">
+                                <input id="browseMessageInput" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)">
                                 <button onclick="postMessage(false)">POST</button>
                                 <button onclick="updateMessageBox(false)">REFRESH</button>
                             </div>

@@ -70,12 +70,21 @@ submitSignup = function(event) {
     const user = {firstname:firstname.value, familyname:lastname.value, gender:gender.value, city:city.value, country:country.value, email:email.value, password:password.value};
     sendRequest("POST", "/sign_up", user, function(status, result) {
         if (status == 201) {
-            
             var signinData = {username:email.value, password:password.value} 
             sendRequest("POST", "/sign_in", signinData, function(status, result) {
                 if (status == 200) {
                     localStorage.setItem("token", result.data);
                     viewDecider();
+                }
+                else if (status == 400) {
+                    document.getElementById("loginError").innerText = "Missing input";
+                }
+                else if (status == 401) {
+                    document.getElementById("loginError").innerText = "Invalid username or password";
+
+                }
+                else if (status == 500) {
+                    getElementById("loginError").innerText = "Internal error"
                 }
             })
         }
@@ -89,6 +98,9 @@ submitSignup = function(event) {
         }
         else if (status == 409) {
             getElementById("signupError").innerText = "User already exists"
+        }
+        else if (status == 500) {
+            getElementById("signupError").innerText = "Internal error"
         }
     })
 };
@@ -112,6 +124,9 @@ submitLogin = function(event) {
             document.getElementById("loginError").innerText = "Invalid username or password";
 
         }
+        else if (status == 500) {
+            getElementById("loginError").innerText = "Internal error"
+        }
     });
 }
 
@@ -122,11 +137,14 @@ submitSignout = function() {
             localStorage.removeItem("token");
             viewDecider();
         }
-        else if (status == 404){
-            document.getElementById("signoutError").value = "Could not find user token";
+        else if (status == 400){
+            document.getElementById("signoutError").value = "Invalid token";
         }
         else if (status == 401) {
             document.getElementById("signoutError").value = "Could not authorize user";          
+        }
+        else if (status == 500) {
+            getElementById("signoutError").innerText = "Internal error"
         }
     }, token);
 }
@@ -149,14 +167,17 @@ submitPasswordChange = function(event) {
         else if (status == 400 && result.message == "Incorrect oldpassword") {
             document.getElementById("changePasswordStatus").innerText = "Current password is incorrect";
         }
-        else if (status == 400) {
+        else if (status == 400 && result-message == "Missing oldpassword") {
             document.getElementById("changePasswordStatus").innerText = "Missing input";
         }
         else if (status == 401) {
             document.getElementById("changePasswordStatus").innerText = "Authentication error";
         }
-        else if (status == 404) {
-            document.getElementById("changePasswordStatus").innerText = "User not found";
+        else if (status == 400 && result.message == "Missing newpassword") {
+            document.getElementById("changePasswordStatus").innerText = "Missing input";
+        }
+        else if (status == 500) {
+            getElementById("changePasswordStatus").innerText = "Internal error"
         }
     }, token);
 }
@@ -188,19 +209,18 @@ updateMessageBox = function(self) {
                 
                 messages.forEach(msg => {
                     const div = document.createElement("div");
+                    div.setAttribute("draggable", "true");
+                    div.setAttribute("ondragstart", "dragStartHandler(event)");
                     div.innerHTML = "<b>" + msg.sender_email + ":</b> " + msg.content;
                     wall.appendChild(div);
                 })
                 setErrorBar("");
             }
-            else if (status == 400) {
-                setErrorBar("Empty message");
-            }
             else if (status == 401) {
                 setErrorBar("Authentication error");
             }
-            else if (status == 404 && result.message == "Email not found"){
-                setErrorBar("User not found");
+            else if (status == 500 && result.message != "No messages retreived") {
+                setErrorBar("Internal error");
             }
         }, token);
     }
@@ -216,6 +236,8 @@ updateMessageBox = function(self) {
                 
                 messages.forEach(msg => {
                     const div = document.createElement("div");
+                    div.setAttribute("draggable", "true");
+                    div.setAttribute("ondragstart", "dragStartHandler(event)");
                     div.innerHTML = "<b>" + msg.sender_email + ":</b> " + msg.content;
                     wall.appendChild(div);
                 })
@@ -230,12 +252,26 @@ updateMessageBox = function(self) {
             else if (status == 404) {
                 setErrorBar("User not found");
             }
+            else if (status == 500) {
+                setErrorBar("Internal error");
+            }
         }, token);
-    }
-    
-    
+    } 
+}
 
-    
+dragStartHandler = function(e) {
+  e.dataTransfer.setData("text", e.target.innerText.split(": ")[1]);
+}
+
+dragOverHandler = function(e) {
+  e.preventDefault();
+}
+
+dropHandler = function(e) {
+  e.preventDefault();
+  const data = e.dataTransfer.getData("text");
+  
+  e.target.value = data;
 }
 
 postMessage = function(self) {
@@ -257,16 +293,13 @@ postMessage = function(self) {
             if (status == 201) {
                 messageInput.value = "";
                 updateMessageBox(self)
-                etErrorBar("");
+                setErrorBar("");
             }
             else if (status == 400) {
                 setErrorBar("Empty message");
             }
             else if (status == 401) {
                 setErrorBar("Authentication error");
-            }
-            else if (status == 404) {
-                setErrorBar("User not found");
             }
             else if (status == 500) {
                 setErrorBar("Internal error");
@@ -287,8 +320,8 @@ loadData = function(self) {
             else if (status == 401) {
                 setErrorBar("Authentication error");
             }
-            else if (status == 404) {
-                setErrorBar("User not found");
+            else if (status == 500) {
+                setErrorBar("Token not found");
             }
         }, token);
     }
@@ -299,7 +332,7 @@ loadData = function(self) {
                 displayInfo(false, result.data);
                 setErrorBar("");
             }
-            else if (status == 400) {
+            else if (status == 500) {
                 setErrorBar("Invalid email");
             }
             else if (status == 401) {
